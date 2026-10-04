@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #1e261c;
+    color: #f3f4f6;
+}
+
+.code-font { font-family: 'JetBrains Mono', monospace; }
+
+.glass-panel {
+    background: rgba(40, 54, 35, 0.45);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(120, 143, 114, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.garden-cell {
+    background-color: #2a3825;
+    border: 1px solid #43533c;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #a7b9a0;
+    position: relative;
+}
+
+.garden-cell:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 2px #4ade80;
+}
+
+.garden-cell.selected {
+    box-shadow: 0 0 0 2px #fbbf24;
+}
+
+.stage-badge {
+    position: absolute;
+    bottom: 2px;
+    right: 3px;
+    font-size: 8px;
+    background: #14532d;
+    color: #86efac;
+    border-radius: 4px;
+    padding: 0 3px;
+    line-height: 1.2;
+}
+
+/* Circular growth journey nodes */
+.tree-canvas {
+    position: relative;
+    width: 100%;
+    min-height: 260px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 10px;
+}
+
+.node {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #1b2219;
+    border: 2px solid #4ade80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    position: absolute;
+    transition: all 0.2s;
+}
+
+.node.current {
+    border-color: #fbbf24;
+    box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.35);
+    transform: scale(1.12);
+}
+
+.node.dim {
+    border-color: #3f4a3a;
+    opacity: 0.55;
+}
+
+/* Traversal animation states (must come after .dim so they override it) */
+.node.visited {
+    opacity: 1;
+    border-color: #38bdf8;
+    background: #0c2a3a;
+}
+
+.node.visiting {
+    border-color: #f472b6;
+    box-shadow: 0 0 0 5px rgba(244, 114, 182, 0.45);
+    transform: scale(1.2);
+}
+
+.step-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    background: #0ea5e9;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.node-label {
+    position: absolute;
+    top: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    white-space: nowrap;
+    color: #a7f3d0;
+    text-align: center;
+}
+
+.node.current .node-label {
+    color: #fde68a;
+    font-weight: 600;
+}
+
+svg.tree-lines {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}

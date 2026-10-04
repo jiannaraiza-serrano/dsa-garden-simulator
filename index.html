@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python-Based Garden Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="min-h-screen p-4 flex flex-col justify-between overflow-x-hidden">
+    <header class="w-full max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 pb-2 border-b border-[#43533c]/40">
+        <div>
+            <div class="flex items-center gap-2">
+                <h1 class="text-2xl font-extrabold tracking-tight text-emerald-100">Python-Based Garden Simulator</h1>
+                <span id="version-badge" class="text-[10px] font-bold uppercase tracking-widest text-emerald-400/90 bg-emerald-950/50 border border-emerald-800/60 px-2 py-0.5 rounded-full"></span>
+            </div>
+            <p class="text-xs text-emerald-300/80 font-medium">SDG 2, 13, 15</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="glass-panel px-4 py-2 rounded-xl flex flex-col items-end">
+                <span class="text-[10px] text-emerald-400 uppercase tracking-widest font-bold">DAY</span>
+                <span class="text-lg font-extrabold text-white" id="day-counter">1</span>
+            </div>
+            <div class="glass-panel px-4 py-2 rounded-xl flex flex-col items-end">
+                <span class="text-[10px] text-emerald-400 uppercase tracking-widest font-bold">SCORE</span>
+                <span class="text-lg font-extrabold text-emerald-300" id="stewardship-counter">0%</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4 flex-grow">
+        <!-- LEFT: RESOURCES -->
+        <section id="resources-section" class="lg:col-span-3 glass-panel rounded-2xl p-4">
+            <h2 class="text-base font-bold text-emerald-200 border-b border-[#43533c]/30 pb-2 mb-4 flex items-center gap-2">
+                <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i> Resource Storage
+            </h2>
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between text-xs font-semibold">
+                        <span class="flex items-center gap-1.5 text-blue-300">Water Reserves</span>
+                        <span id="water-text">0 / 200 L</span>
+                    </div>
+                    <div class="w-full bg-[#1b2219] h-2.5 rounded-full overflow-hidden">
+                        <div id="water-bar" class="bg-gradient-to-r from-blue-500 to-cyan-400 h-full rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs font-semibold">
+                        <span class="flex items-center gap-1.5 text-emerald-300">Seed Inventory</span>
+                        <span id="seeds-text">0 / 100</span>
+                    </div>
+                    <div class="w-full bg-[#1b2219] h-2.5 rounded-full overflow-hidden">
+                        <div id="seeds-bar" class="bg-gradient-to-r from-emerald-500 to-lime-400 h-full rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs font-semibold">
+                        <span class="flex items-center gap-1.5 text-amber-300">Solar Energy</span>
+                        <span id="energy-text">0 / 120 Wh</span>
+                    </div>
+                    <div class="w-full bg-[#1b2219] h-2.5 rounded-full overflow-hidden">
+                        <div id="energy-bar" class="bg-gradient-to-r from-amber-500 to-yellow-300 h-full rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs font-semibold">
+                        <span class="flex items-center gap-1.5 text-rose-300">Community Hope</span>
+                        <span id="hope-text">0 / 100</span>
+                    </div>
+                    <div class="w-full bg-[#1b2219] h-2.5 rounded-full overflow-hidden">
+                        <div id="hope-bar" class="bg-gradient-to-r from-rose-500 to-pink-400 h-full rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs font-semibold">
+                        <span class="flex items-center gap-1.5 text-yellow-200">Coins / Dues</span>
+                        <span id="coins-text" class="text-yellow-200">0 Coins</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CENTER -->
+        <section class="lg:col-span-6 flex flex-col gap-4">
+            <div class="flex bg-[#192218] p-1.5 rounded-xl border border-[#43533c]/40 w-fit">
+                <button onclick="switchTab('game')" id="tab-game" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-[#283623] text-emerald-100">Interactive Sanctuary</button>
+                <button onclick="switchTab('code')" id="tab-code" class="px-4 py-1.5 rounded-lg text-xs font-bold text-emerald-400/80 hover:text-emerald-100">Student Code Editor</button>
+            </div>
+
+            <div id="view-game" class="glass-panel rounded-2xl p-6 min-h-[380px]">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-white">Sanctuary Garden Grid</h2>
+                        <p class="text-xs text-emerald-300">Select a plant → click empty tile to plant • Click planted tile to inspect / harvest</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-emerald-300">Seed Bag:</span>
+                        <select id="crop-selector" class="bg-[#1b2219] border border-emerald-700 text-emerald-100 text-sm rounded-xl px-3 py-2"></select>
+                    </div>
+                </div>
+
+                <!-- 5×5 dark grid – starts completely empty -->
+                <div id="garden-grid" class="grid grid-cols-5 gap-3"></div>
+
+                <!-- Hierarchical / Growth Journey section (BELOW the grid) -->
+                <div class="mt-6 pt-4 border-t border-[#43533c]/40">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-bold text-emerald-200 flex items-center gap-2">
+                            <i data-lucide="git-branch" class="w-4 h-4 text-emerald-400"></i>
+                            Plant Journey (Growth Tree)
+                        </h3>
+                        <div class="flex gap-2">
+                            <button onclick="advanceAllGrowth()" class="text-[10px] px-2 py-1 rounded bg-emerald-800 border border-emerald-600 text-emerald-100 hover:bg-emerald-700">Grow All ▲</button>
+                            <button onclick="runTraversal('pre')" class="text-[10px] px-2 py-1 rounded bg-[#2a3825] border border-emerald-800 text-emerald-200 hover:bg-[#34462e]">Pre-order</button>
+                            <button onclick="runTraversal('in')" class="text-[10px] px-2 py-1 rounded bg-[#2a3825] border border-emerald-800 text-emerald-200 hover:bg-[#34462e]">In-order</button>
+                            <button onclick="runTraversal('post')" class="text-[10px] px-2 py-1 rounded bg-[#2a3825] border border-emerald-800 text-emerald-200 hover:bg-[#34462e]">Post-order</button>
+                            <button onclick="runTraversal('bfs')" class="text-[10px] px-2 py-1 rounded bg-[#2a3825] border border-emerald-800 text-emerald-200 hover:bg-[#34462e]">BFS</button>
+                        </div>
+                    </div>
+
+                    <!-- Clearly shows which plant is being inspected -->
+                    <div id="inspecting-label" class="text-xs text-amber-200/90 mb-2 font-medium">
+                        No plant selected – click a planted tile to inspect its growth journey.
+                    </div>
+
+                    <!-- Garden Overview -->
+                    <div id="garden-overview" class="bg-[#1b2219] rounded-xl p-3 mb-3 text-xs text-emerald-200 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div>Total Plants: <span id="ov-total" class="font-bold text-white">0</span></div>
+                        <div>Seeds: <span id="ov-seed" class="font-bold text-gray-300">0</span></div>
+                        <div>Growing: <span id="ov-growing" class="font-bold text-emerald-300">0</span></div>
+                        <div>Mature: <span id="ov-mature" class="font-bold text-amber-300">0</span></div>
+                    </div>
+
+                    <!-- Growth journey tree (circular nodes) -->
+                    <div id="tree-viz" class="bg-[#0f160f] rounded-xl overflow-hidden relative">
+                        <div class="tree-canvas" id="tree-canvas"></div>
+                    </div>
+
+                    <div id="traversal-output" class="mt-2 bg-black/50 border border-emerald-900 rounded-xl p-3 text-xs code-font text-amber-200 min-h-[36px]">
+                        Select a planted tile to view its growth journey.
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-code" class="glass-panel rounded-2xl p-6 flex flex-col flex-grow hidden">
+                <h2 class="font-bold mb-3 flex items-center gap-2">
+                    <i data-lucide="code" class="w-5 h-5 text-emerald-400"></i> Student Code Editor (Lab)
+                </h2>
+                <select id="topic-selector" onchange="loadTopic()" class="w-full bg-[#1b2219] border border-emerald-700 rounded-xl p-3 mb-4 text-sm"></select>
+                <textarea id="code-editor" readonly class="flex-1 bg-[#0a0f0a] border border-emerald-800 rounded-xl p-4 code-font text-sm font-medium leading-relaxed" spellcheck="false"></textarea>
+                <button onclick="runPythonCode()" class="mt-4 bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold text-white flex items-center justify-center gap-2">
+                    <i data-lucide="play" class="w-4 h-4"></i> Run Python Code
+                </button>
+                <div id="output-console" class="mt-4 bg-black/70 border border-emerald-900 rounded-xl p-4 text-xs max-h-48 overflow-auto font-mono whitespace-pre-wrap"></div>
+            </div>
+        </section>
+
+        <!-- RIGHT PANEL -->
+        <section class="lg:col-span-3 flex flex-col gap-4">
+            <div id="climate-queue-panel" class="glass-panel rounded-2xl p-4">
+                <h3 class="font-bold text-emerald-400 mb-3 flex items-center gap-2">
+                    <i data-lucide="cloud-lightning" class="w-4 h-4"></i> Climate Queue (FIFO)
+                </h3>
+                <div id="climate-queue" class="space-y-3 text-sm"></div>
+            </div>
+            <div id="stack-panel" class="glass-panel rounded-2xl p-4 flex-1 flex flex-col gap-2">
+                <h3 class="font-bold text-emerald-400 mb-3 flex items-center gap-2">
+                    <i data-lucide="history" class="w-4 h-4"></i> Action History (Stack)
+                </h3>
+                <div id="action-stack" class="flex-1 space-y-2 text-sm overflow-auto"></div>
+                <button onclick="triggerUndo()" class="mt-4 w-full bg-[#2a3825] hover:bg-[#34462e] text-emerald-200 py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2 border border-emerald-800">
+                    <i data-lucide="undo-2" class="w-4 h-4"></i> Undo (Stack Pop)
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

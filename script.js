@@ -1,4 +1,4 @@
-const APP_VERSION = "0.4.0";
+const APP_VERSION = "0.5.0";
 
 let pyodideInstance = null;
 let gardenPlants = {};          // pos → {name, emoji, stage}
@@ -383,7 +383,115 @@ pushAction("Traversed the plant growth journey")
 print("Hierarchical tree ready!")
 `
     },
-    5: { title: "Binary Search Trees (BST) & Node Mutation", code: `# Topic 5\n# ==== WRITE YOUR CODE HERE ====\n` },
+    5: {
+        title: "Binary Search Trees (BST) & Node Mutation",
+        code: `# Topic 5: Binary Search Trees (BST) & Node Mutation
+class BSTNode:
+    def __init__(self, key, name):
+        self.key = key          # water need (used to order the tree)
+        self.name = name
+        self.left = None
+        self.right = None
+
+
+class PlantBST:
+    def __init__(self):
+        self.root = None
+
+    # ---- Insert ----
+    def insert(self, key, name):
+        self.root = self._insert(self.root, key, name)
+
+    def _insert(self, node, key, name):
+        if node is None:
+            return BSTNode(key, name)
+        if key < node.key:
+            node.left = self._insert(node.left, key, name)
+        elif key > node.key:
+            node.right = self._insert(node.right, key, name)
+        else:
+            node.name = name    # same key: update the name
+        return node
+
+    # ---- Search ----
+    def search(self, key):
+        current = self.root
+        while current is not None:
+            if key == current.key:
+                return current.name
+            elif key < current.key:
+                current = current.left
+            else:
+                current = current.right
+        return None
+
+    # ---- Inorder gives sorted order ----
+    def inorder(self, node, result):
+        if node is None:
+            return
+        self.inorder(node.left, result)
+        result.append((node.key, node.name))
+        self.inorder(node.right, result)
+
+    def find_min(self, node):
+        while node.left is not None:
+            node = node.left
+        return node
+
+    # ---- Delete (node mutation) ----
+    def delete(self, key):
+        self.root = self._delete(self.root, key)
+
+    def _delete(self, node, key):
+        if node is None:
+            return None
+        if key < node.key:
+            node.left = self._delete(node.left, key)
+        elif key > node.key:
+            node.right = self._delete(node.right, key)
+        else:
+            # Case 1 & 2: zero or one child
+            if node.left is None:
+                return node.right
+            if node.right is None:
+                return node.left
+            # Case 3: two children -> replace with inorder successor
+            successor = self.find_min(node.right)
+            node.key = successor.key
+            node.name = successor.name
+            node.right = self._delete(node.right, successor.key)
+        return node
+
+    def height(self, node):
+        if node is None:
+            return 0
+        return 1 + max(self.height(node.left), self.height(node.right))
+
+
+# ---- Test ----
+bst = PlantBST()
+bst.insert(50, "Tulip")
+bst.insert(30, "Sunflower")
+bst.insert(70, "Hibiscus")
+bst.insert(20, "Hyacinth")
+bst.insert(40, "Cherry Blossom")
+bst.insert(60, "Lavender")
+
+result = []
+bst.inorder(bst.root, result)
+print("Inorder (sorted by water need):", result, "\\n")
+print("Search 40:", bst.search(40), "\\n")
+print("Search 99:", bst.search(99), "\\n")
+
+bst.delete(30)   # node with two children
+pushAction("Removed a plant from the BST")
+result = []
+bst.inorder(bst.root, result)
+print("After deleting 30:", result, "\\n")
+print("Tree height:", bst.height(bst.root), "\\n")
+print("BST ready!")
+`
+    },
     6: { title: "Hash Tables, Collisions, & Rehashing", code: `# Topic 6\n# ==== WRITE YOUR CODE HERE ====\n` },
     7: { title: "Graph Foundations, Adjacency Matrices/Lists, & DFS/BFS", code: `# Topic 7\n# ==== WRITE YOUR CODE HERE ====\n` },
     8: { title: "Sorting Algorithms (Bubble, Insertion, Selection, Quick, & Merge Sort)", code: `# Topic 8\n# ==== WRITE YOUR CODE HERE ====\n` },

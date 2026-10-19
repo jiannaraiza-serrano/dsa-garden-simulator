@@ -479,25 +479,25 @@ bst.insert(60, "Lavender")
 
 result = []
 bst.inorder(bst.root, result)
-print("Inorder (sorted by water need):", result, "\\n")
-print("Search 40:", bst.search(40), "\\n")
-print("Search 99:", bst.search(99), "\\n")
+print("Inorder (sorted by water need):", result)
+print("Search 40:", bst.search(40))
+print("Search 99:", bst.search(99))
 
 bst.delete(30)   # node with two children
 pushAction("Removed a plant from the BST")
 result = []
 bst.inorder(bst.root, result)
-print("After deleting 30:", result, "\\n")
-print("Tree height:", bst.height(bst.root), "\\n")
+print("After deleting 30:", result)
+print("Tree height:", bst.height(bst.root))
 print("BST ready!")
 `
     },
-    6: { title: "Hash Tables, Collisions, & Rehashing", code: `# Topic 6\n# ==== WRITE YOUR CODE HERE ====\n` },
-    7: { title: "Graph Foundations, Adjacency Matrices/Lists, & DFS/BFS", code: `# Topic 7\n# ==== WRITE YOUR CODE HERE ====\n` },
-    8: { title: "Sorting Algorithms (Bubble, Insertion, Selection, Quick, & Merge Sort)", code: `# Topic 8\n# ==== WRITE YOUR CODE HERE ====\n` },
-    9: { title: "Searching Algorithms (Linear Search vs. Binary Search)", code: `# Topic 9\n# ==== WRITE YOUR CODE HERE ====\n` },
-    10: { title: "Advanced Strategic Paradigms (Dijkstra's Algorithm & Greedy Patterns)", code: `# Topic 10\n# ==== WRITE YOUR CODE HERE ====\n` },
-    11: { title: "Dynamic Programming (DP), Memoization, & Divide-and-Conquer", code: `# Topic 11\n# ==== WRITE YOUR CODE HERE ====\n` }
+    6: { title: "Hash Tables, Collisions, & Rehashing", code: `# Topic 6# ==== WRITE YOUR CODE HERE ====` },
+    7: { title: "Graph Foundations, Adjacency Matrices/Lists, & DFS/BFS", code: `# Topic 7# ==== WRITE YOUR CODE HERE ====` },
+    8: { title: "Sorting Algorithms (Bubble, Insertion, Selection, Quick, & Merge Sort)", code: `# Topic 8# ==== WRITE YOUR CODE HERE ====` },
+    9: { title: "Searching Algorithms (Linear Search vs. Binary Search)", code: `# Topic 9# ==== WRITE YOUR CODE HERE ====` },
+    10: { title: "Advanced Strategic Paradigms (Dijkstra's Algorithm & Greedy Patterns)", code: `# Topic 10# ==== WRITE YOUR CODE HERE ====` },
+    11: { title: "Dynamic Programming (DP), Memoization, & Divide-and-Conquer", code: `# Topic 11# ==== WRITE YOUR CODE HERE ====` }
 };
 
 // ---------- Pyodide ----------
